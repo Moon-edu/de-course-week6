@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:14.5
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./dataset:/dataset
+    ports:
+      - 5432:5432
+    hostname: postgres.server.local
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
+
+  grafana:
+    image: grafana/grafana:9.2.3
+    ports:
+      - 3000:3000
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.6
+volumes:
+    postgres:
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1
